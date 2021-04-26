@@ -38,7 +38,7 @@ export class UserController {
     @Role(UserRole.ADMIN)
     @UseGuards(JwtAuthGuard, RoleGuard)
     @Delete(':id')
-    remove(@Param('id') id: string, @Request() req: any) {
+    remove(@Param('id') id: string) {
         return this.userService.remove(id)
     }
 }
