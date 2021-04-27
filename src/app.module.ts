@@ -4,9 +4,10 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './entities/user/user.module';
 import { AuthModule } from './entities/auth/auth.module';
+import { TimeModule } from './entities/time/time.module';
 
 @Module({
-    imports: [MongooseModule.forRoot('mongodb://localhost/TimeTracker'), UserModule, AuthModule],
+    imports: [MongooseModule.forRoot('mongodb://localhost/TimeTracker'), UserModule, AuthModule, TimeModule],
     controllers: [AppController],
     providers: [AppService],
 })
