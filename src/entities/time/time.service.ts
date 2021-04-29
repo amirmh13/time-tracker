@@ -55,7 +55,7 @@ export class TimeService {
         return foundedTime;
     }
 
-    getNowDate(): string {
-        return new Date().toISOString();
+    getNowDate(): number {
+        return new Date().getTime();
     }
 }

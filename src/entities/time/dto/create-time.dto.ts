@@ -1,6 +1,7 @@
 export class CreateTimeDto {
     owner: string;
-    enterTime: string;
-    exitTime ? : string;
+    enterTime: number;
+    exitTime ? : number;
     working ? : boolean;
+    duration ? : number;
 }
