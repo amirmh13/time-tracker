@@ -1,7 +1,7 @@
 export class CreateTimeDto {
     owner: string;
-    enterTime: number;
-    exitTime ? : number;
+    enterTimes: number[];
+    exitTimes ? : number[];
     working ? : boolean;
     duration ? : number;
 }

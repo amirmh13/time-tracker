@@ -10,15 +10,22 @@ export class TimeService {
     constructor(@InjectModel(Time.name) private timeModel: Model < Time > ) {}
 
     async userEntered(ownerId: string) {
-        const workingTime = await this.timeModel.findOne({ owner: ownerId, working: true });
+        const workingTime = await this.findTime({ owner: ownerId, working: true });
 
-        if (workingTime) {
-            throw new HttpException('You have already an open work time', HttpStatus.CONFLICT)
+        if (workingTime) throw new HttpException('You have already an open work time', HttpStatus.CONFLICT);
+
+        const timeInToday = await this.findTimesOfToday();
+
+        if (timeInToday) {
+            timeInToday.enterTimes.push(this.getNowDate());
+            timeInToday.working = true;
+
+            return await timeInToday.save();
         }
 
         const timeDto: CreateTimeDto = {
             owner: ownerId,
-            enterTime: this.getNowDate(),
+            enterTimes: [this.getNowDate()],
         }
 
         const newTime = new this.timeModel(timeDto)
@@ -27,13 +34,22 @@ export class TimeService {
     }
 
     async userExit(ownerId: string) {
-        let foundedTime = await this.timeModel.findOne({ owner: ownerId, working: true });
+        let foundedTime = await this.findTime({ owner: ownerId, working: true });
 
         if (!foundedTime) {
             throw new HttpException('You are not entered yet!', HttpStatus.CONFLICT)
         }
 
-        foundedTime.exitTime = this.getNowDate();
+        const timeInToday = await this.findTimesOfToday();
+
+        if (timeInToday) {
+            timeInToday.exitTimes.push(this.getNowDate());
+            timeInToday.working = false;
+
+            return await timeInToday.save();
+        }
+
+        foundedTime.exitTimes = [this.getNowDate()];
         foundedTime.working = false;
 
         return await foundedTime.save();
@@ -53,6 +69,27 @@ export class TimeService {
         }
 
         return foundedTime;
+    }
+
+    async findTime(query: any): Promise < Time > {
+        const foundedItem = await this.timeModel.findOne(query);
+
+        return foundedItem
+    }
+
+    async findTimesOfToday() {
+        const startOfTodayTimeStamp = this.getStartOfDayTimeStamp();
+        const startOfTomorrowTimeStamp = this.getStartOfDayTimeStamp(1);
+
+        const foundedItem = await this.findTime({ createTime: { $gte: startOfTodayTimeStamp, $lte: startOfTomorrowTimeStamp } });
+
+        return foundedItem
+    }
+
+    getStartOfDayTimeStamp(day: number = 0): number {
+        const today = new Date();
+
+        return new Date(today.getFullYear(), today.getMonth() + day, today.getDay()).getTime();
     }
 
     getNowDate(): number {
