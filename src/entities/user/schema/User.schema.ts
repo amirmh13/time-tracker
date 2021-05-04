@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
 import * as bcrypt from 'bcrypt';
-import { UserRole } from "src/shared/enums";
+import { Document } from "mongoose";
 
 const saltOrRounds = 10;
 const salt = bcrypt.genSaltSync(saltOrRounds);
@@ -10,7 +9,7 @@ const salt = bcrypt.genSaltSync(saltOrRounds);
 export class User extends Document {
 
     @Prop({ type: String, unique: true, required: true })
-    email: string;
+    phoneNumber: string;
 
     @Prop({ type: String, required: true })
     password: string;
@@ -21,7 +20,7 @@ export class User extends Document {
     @Prop({ type: String })
     last_name: string;
 
-    @Prop({ type: Number, default: UserRole.USER })
+    @Prop({ type: Number, required: true })
     role: number;
 
     @Prop()

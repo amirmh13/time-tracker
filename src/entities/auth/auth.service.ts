@@ -9,12 +9,12 @@ import { jwtConstants } from './constants';
 export class AuthService {
 
     constructor(
-        private userService: UserService,
+        private readonly userService: UserService,
         private jwtService: JwtService,
     ) {}
 
-    async validateUser(email: string, password: string) {
-        const foundedUser = await this.userService.findOneByEmail(email);
+    async validateUser(phoneNumber: string, password: string) {
+        const foundedUser = await this.userService.findOneByPhoneNumber(phoneNumber);
 
         if (foundedUser && foundedUser.comparePassword(password, foundedUser.password)) {
             const { password, ...result } = foundedUser.toJSON()
@@ -24,7 +24,7 @@ export class AuthService {
     }
 
     login(user: Partial < User > ) {
-        const payload = { sub: user._id, email: user.email, role: user.role }
+        const payload = { sub: user._id, phoneNumber: user.phoneNumber, role: user.role }
         
         return {
             access_token: this.jwtService.sign(payload)
