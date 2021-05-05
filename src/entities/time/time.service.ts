@@ -86,6 +86,19 @@ export class TimeService {
         return foundedItem
     }
 
+    async getUserTimes(owner: string) {
+        const times = await this.timeModel.find({ owner });
+        return times
+    }
+
+    async getUserBriefStatistics(owner: string) {
+        const times = await this.getUserTimes(owner);
+
+        return {
+            workDuration: times.reduce((acc, c) => acc + c.duration, 0)
+        }
+    }
+
     getStartOfDayTimeStamp(day: number = 0): number {
         const today = new Date();
 

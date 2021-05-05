@@ -1,8 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
-import { TimeService } from './time.service';
-import { CreateTimeDto } from './dto/create-time.dto';
-import { UpdateTimeDto } from './dto/update-time.dto';
+import { Controller, Delete, Get, Param, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/auth-guards/jwt-auth.guard';
+import { TimeService } from './time.service';
 
 @Controller('time')
 @UseGuards(JwtAuthGuard)
@@ -11,7 +9,7 @@ export class TimeController {
 
     @Get()
     findAll(@Request() req: any) {
-      const user = req.user;
+        const user = req.user;
         return this.timeService.findAllUserTimes(user._id);
     }
 
@@ -21,14 +19,24 @@ export class TimeController {
     }
 
     @Get('enter')
-    userEntered(@Request() req: any) {
+    userEntered(@Request() req: { user: any }) {
         const user = req.user;
         return this.timeService.userEntered(user._id)
     }
 
     @Get('exit')
-    userExit(@Request() req: any) {
+    userExit(@Request() req: { user: any }) {
         const user = req.user;
         return this.timeService.userExit(user._id)
+    }
+
+    @Get('userTimes/:id')
+    getUserTimes(@Param('id') id: string) {
+        return this.timeService.getUserTimes(id)
+    }
+
+    @Get('getUserBriefStatistics/:id')
+    getUserBriefStatistics(@Param('id') id: string) {
+        return this.timeService.getUserBriefStatistics(id)
     }
 }

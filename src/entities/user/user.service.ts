@@ -18,14 +18,15 @@ export class UserService {
     ) {}
 
     async register(createUserDto: CreateUserDto) {
+        const newUser = new this.userModel(createUserDto);
         if (createUserDto?.role == UserRole.USER) {
-            const isUserInvited = await this.companyUserService.findCompanyUser(createUserDto.phoneNumber) != null;
+            const invitedUser = await this.companyUserService.findCompanyUser(createUserDto.phoneNumber);
 
-            if (!isUserInvited) {
+            if (!invitedUser) {
                 throw new HttpException('You have been not invited yet!', HttpStatus.NOT_ACCEPTABLE);
             }
+            newUser.company = invitedUser.toJSON().company;
         }
-        const newUser = new this.userModel(createUserDto);
         const savedUser = await newUser.save();
         return this.authService.login(savedUser.toJSON())
     }
@@ -48,5 +49,15 @@ export class UserService {
 
     async remove(_id: string) {
         return await this.userModel.remove({ _id });
+    }
+
+    async getAllCompanyUsers(companyId: string) {
+        console.log(companyId);
+        
+        const users = await this.userModel.find({ company: companyId });
+        if (!users.length) {
+            throw new HttpException('You are not any users yet!', HttpStatus.NOT_FOUND);
+        }
+        return users
     }
 }

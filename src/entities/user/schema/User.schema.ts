@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as bcrypt from 'bcrypt';
-import { Document } from "mongoose";
+import { Document, SchemaTypes } from "mongoose";
 
 const saltOrRounds = 10;
 const salt = bcrypt.genSaltSync(saltOrRounds);
@@ -22,6 +22,9 @@ export class User extends Document {
 
     @Prop({ type: Number, required: true })
     role: number;
+
+    @Prop({ type: SchemaTypes.ObjectId, ref: User.name, default: null })
+    company: string;
 
     @Prop()
     name ? : string;

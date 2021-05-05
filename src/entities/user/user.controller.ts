@@ -41,4 +41,11 @@ export class UserController {
     remove(@Param('id') id: string) {
         return this.userService.remove(id)
     }
+
+    @Get('getAllCompanyUsers')
+    @UseGuards(JwtAuthGuard)
+    getAllCompanyUser(@Request() req: { user: any }) {
+        const user = req.user;
+        return this.userService.getAllCompanyUsers(user._id);
+    }
 }
